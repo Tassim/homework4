@@ -7,7 +7,13 @@ let $quiz = document.querySelector("#start-quiz");
 let $question = document.querySelector("#question");
 let $choices = document.querySelector("#choices");
 let $display = document.querySelector("#display");
+let $questionsDisplay = document.querySelector(".card-center");
+let $endGame = document.querySelector("#endGame");
+let $initials = document.querySelector("#initials");
+let $submit = document.querySelector("#submit");
+let $userForm = document.querySelector(".userForm");
 
+const $userName = document.querySelector("#name");
 
 // Create an object with the questions and answers for the quiz
 let questions = [
@@ -26,8 +32,11 @@ let score = 0;
 let index = 0;
 
 let questionTime;
+let timerInterval;
 
-console.log(questions)
+let userInit = [];
+
+
 
 // open the page
 // view the rules and start button
@@ -74,17 +83,20 @@ $choices.addEventListener("click", function(e){
     // compare targeted button to the correct answer
     if(choice === rightAns){
         correctAnswer()
-        resetState()
-        runningQuestion++;
-        renderQuestion();
         console.log("YAY");
 
     }else{
         wrongAnswer()
-        resetState()
-        runningQuestion++;
-        renderQuestion();
         console.log("DAMMIT");
+    }
+    resetState()
+    runningQuestion++;
+
+    if(runningQuestion < 4){
+    renderQuestion()
+    }else {
+        clearInterval(timerInterval);
+        gameOver()
     }
 })
 
@@ -92,7 +104,7 @@ $choices.addEventListener("click", function(e){
 // Set the time at the nav bar
 function setTimer() {
     questionTime = 15;
-    let timerInterval = setInterval(function() {
+    timerInterval = setInterval(function() {
         questionTime--;
         $scoreTimer.textContent = `Time: ${questionTime}  for the end of the game.`;
         
@@ -112,13 +124,13 @@ function correctAnswer(){
 
 }
 
-// if the answer is wrong display a message on the botton saying "Wrong" and subtract 5 seconds of the timer
+// if the answer is wrong display a message on the botton saying "Wrong Answer" and subtract 5 seconds of the timer
 function wrongAnswer(){
     $display.textContent = "Wrong Answer!";
     questionTime -= 5;
     $counter.textContent = `Score: ${score}`
 
-    if(questionTime === 0) {
+    if(questionTime <= 0) {
         clearInterval(timerInterval);
         gameOver()
     }
@@ -126,42 +138,62 @@ function wrongAnswer(){
 
 // reset for next question
 function resetState() {
-    clearStatusClass(document.body)
+    // clearStatusClass(document.body)
     while ($choices.firstChild) {
         $choices.removeChild($choices.firstChild)
     }
 }
 
-function setStatusClass(element, correct) {
-    clearStatusClass(element)
-    if (correct) {
-      element.classList.add('correct')
-    } else {
-      element.classList.add('wrong')
-    }
-  }
+// function setStatusClass(element, correct) {
+//     clearStatusClass(element)
+//     if (correct) {
+//       element.classList.add('correct')
+//     } else {
+//       element.classList.add('wrong')
+//     }
+//   }
   
-function clearStatusClass(element) {
-    element.classList.remove("correct")
-    element.classList.remove("wrong")
-}
-
+// function clearStatusClass(element) {
+//     element.classList.remove("correct")
+//     element.classList.remove("wrong")
+// }
 
 // move to the next question
 
 // The end of the game
 // When the time is 0 or all the questions are answered
-    if(questionTime === 0 || runningQuestion > 4){
-        console.log("THE END")
-    }
-
 function gameOver() {
-    if(questionTime === 0){
+    $questionsDisplay.remove();
+    $endGame.style.display = "block";
 
+    if(questionTime <= 0){
+        console.log("THE END")
 }
 }
+
 // display on the screen Game Over! the total score
 // Input box to add the initials
+// when the initials are submitted
+$userForm.addEventListener("submit", function(e) {
+    e.preventDefault();
+
+    initialsText = $initials.value.trim();
+
+    if (initialsText = "") {
+        return;
+    }
+    userInit.push(initialsText);
+    $initials.value = "";
+    storeUser()
+
+    console.log(userInit);
+})
+
+function storeUser() {
+    // Stringify and set "todos" key in localStorage to todos array
+    localStorage.setItem("Name", JSON.stringify(userInit));
+  }
+
 // submitt button
     // once button clicked
     // clear the page
@@ -173,6 +205,7 @@ function gameOver() {
 
 
 
+$endGame.style.display = "none"
 
 
 
@@ -189,87 +222,4 @@ function gameOver() {
 
 
 
-
-// function startQuiz() {
-//     start.style.display = "none";
-//     renderQuestion();
-//     quiz.style.display = "block";
-//     setTimer()
-// }
-// startQuiz()
-
-// function renderQuestion(){
-//     // Render the questions object into the browser
-//     // Create a for loop
-//     for (let i = 0; i < questions.length; i++) {
-//         var currentQuestion = questions[i].q;
-//         // Create an element for the question
-//         var $h2El = document.createElement("h5");
-//         $h2El.textContent = currentQuestion;
-//         question.appendChild($h2El);
-
-//         var currentAnswer = questions[i].a;
-//         // create a button for each answer
-//         var $pEl = document.createElement("button");
-//         $pEl.textContent = currentAnswer;
-//         choiceA.appendChild($pEl);
-
-//         console.log(currentAnswer)
-
-//     }
-// }
-// renderQuestion()
-
-// // loop through the array
-// for(var i = 0; i < questions.length; i++) {
-//     var currentQuestion = questions[i];
-//     console.log("hello")
-// }
-
-// function renderQuestion(){
-//     var q = questions[runningQuestion];
-
-//     questions.innerHTML = "<p>" + q.questions + "</p>"
-//     choiceA.innerHTML = q.choiceA;
-//     choiceB.innerHTML = q.choiceB;
-//     choiceC.innerHTML = q.choiceC;
-//     choiceD.innerHTML = q.choiceD;
-    
-// }
-//     start.style.display = "none";
-//     renderQuestion()
-//     quiz.style.display = "block"
-
-
-// function checkAnswer(answer){
-//     if(answer === questions[runningQuestion].correct) {
-//         //answer is correct
-//         score++;
-//     } else
-//         questionTime -5;
-// }
-
-// Set the time at the nav bar
-// function setTimer() {
-//     var questionTime = 10;
-//     var timerInterval = setInterval(function() {
-//         questionTime--;
-//         scoreTimer.textContent = questionTime + " for the end of the game.";
-        
-//         if(questionTime === 0) {
-//             clearInterval(timerInterval);
-//         }
-//     }, 1000);
-// }
-// setTimer()
-
-// function startQuiz() {
-//     start.style.display = "none";
-//     renderQuestion();
-//     quiz.style.display = "block";
-//     setTimer()
-// }
-// startQuiz()
-
-// start.addEventListener("click", startQuiz);
 
