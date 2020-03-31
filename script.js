@@ -12,8 +12,11 @@ let $endGame = document.querySelector("#endGame");
 let $initials = document.querySelector("#initials");
 let $submit = document.querySelector("#submit");
 let $userForm = document.querySelector(".userForm");
+let $gameOver = document.querySelector(".gameOver");
+let $highScore = document.querySelector("#scoreDisplay");
 
-const $userName = document.querySelector("#name");
+let $userName = document.querySelector("#names");
+let $finalScore = document.querySelector("#scores");
 
 // Create an object with the questions and answers for the quiz
 let questions = [
@@ -144,19 +147,6 @@ function resetState() {
     }
 }
 
-// function setStatusClass(element, correct) {
-//     clearStatusClass(element)
-//     if (correct) {
-//       element.classList.add('correct')
-//     } else {
-//       element.classList.add('wrong')
-//     }
-//   }
-  
-// function clearStatusClass(element) {
-//     element.classList.remove("correct")
-//     element.classList.remove("wrong")
-// }
 
 // move to the next question
 
@@ -179,47 +169,48 @@ $userForm.addEventListener("submit", function(e) {
 
     initialsText = $initials.value.trim();
 
-    if (initialsText = "") {
+    if (initialsText === "") {
         return;
     }
     userInit.push(initialsText);
+    console.log(userInit);
     $initials.value = "";
     storeUser()
+    $endGame.remove();
+    displayHighscores();
 
-    console.log(userInit);
 })
 
 function storeUser() {
     // Stringify and set "todos" key in localStorage to todos array
     localStorage.setItem("Name", JSON.stringify(userInit));
-  }
+    localStorage.setItem("Score", score);
+}
+  
 
-// submitt button
-    // once button clicked
+// once information is submited
     // clear the page
     // show new highscore list with previous scores stored
     // display button to go back
         // once clicked on button start the game again
     // display button to clear the scores
         // once button clicked clear the scores
+function displayHighscores() {
+    let $h3El = document.createElement("h3");
+    $h3El.textContent = "Highscore";
+    $highScore.prepend($h3El);
 
+    $userName.textContent = localStorage.getItem("Name");
+    $finalScore.textContent = localStorage.getItem("Score");
 
+    let $restartBtn = document.createElement("button");
+    $restartBtn.setAttribute("class", "btnRestart");
+    $restartBtn.textContent = "Let's play again?";
+    $highScore.appendChild($restartBtn);
+}
+
+$highScore.addEventListener("click", function(){
+    location.reload();
+})
 
 $endGame.style.display = "none"
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
