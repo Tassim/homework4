@@ -10,6 +10,6 @@ out.
 Tip:
 Time is your enemy, anything on the page, such as layout, color, time and score is there to disturb you super fast thinking process, so focus on the game.
 
-At the end of the game you get to add your name to the highscore list and compare yourself with the top 5.
+At the end of the game you get to add your name to the highscore list and compare yourself with the top highscores.
 
 Good luck!
