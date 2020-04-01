@@ -38,16 +38,18 @@ let questionTime;
 let timerInterval;
 
 let userInit = [];
-
-
+let userArray = JSON.parse(localStorage.getItem("highScores")) || [];
 
 // open the page
 // view the rules and start button
 // user click on the start button
 $start.addEventListener("click", function(){
+    // Start page disapear
     $quiz.remove();
-    renderQuestion()
-    setTimer()
+    // First quesiton pops on the screen
+    renderQuestion();
+    // Timer starts running
+    setTimer();
 })
 
 function renderQuestion(){
@@ -85,12 +87,10 @@ $choices.addEventListener("click", function(e){
 
     // compare targeted button to the correct answer
     if(choice === rightAns){
-        correctAnswer()
-        console.log("YAY");
+        correctAnswer();
 
     }else{
-        wrongAnswer()
-        console.log("DAMMIT");
+        wrongAnswer();
     }
     resetState()
     runningQuestion++;
@@ -111,8 +111,9 @@ function setTimer() {
         questionTime--;
         $scoreTimer.textContent = `Time: ${questionTime}  for the end of the game.`;
         
-        if(questionTime === 0) {
+        if(questionTime <= 0) {
             clearInterval(timerInterval);
+            gameOver();
         }
     }, 1100);
 }
@@ -123,8 +124,6 @@ function correctAnswer(){
     score++;
     questionTime += 10;
     $counter.textContent = `Score: ${score}`;
-    console.log(score)
-
 }
 
 // if the answer is wrong display a message on the botton saying "Wrong Answer" and subtract 5 seconds of the timer
@@ -147,18 +146,12 @@ function resetState() {
     }
 }
 
-
-// move to the next question
-
 // The end of the game
 // When the time is 0 or all the questions are answered
 function gameOver() {
     $questionsDisplay.remove();
     $endGame.style.display = "block";
 
-    if(questionTime <= 0){
-        console.log("THE END")
-}
 }
 
 // display on the screen Game Over! the total score
@@ -175,19 +168,21 @@ $userForm.addEventListener("submit", function(e) {
     userInit.push(initialsText);
     console.log(userInit);
     $initials.value = "";
-    storeUser()
+    var user = {
+        initials : initialsText,
+        userScore : score
+    }
+    userArray.push(user);
+    storeUser();
     $endGame.remove();
     displayHighscores();
 
 })
 
 function storeUser() {
-    // Stringify and set "todos" key in localStorage to todos array
-    localStorage.setItem("Name", JSON.stringify(userInit));
-    localStorage.setItem("Score", score);
+    localStorage.setItem("highScores", JSON.stringify(userArray));
 }
   
-
 // once information is submited
     // clear the page
     // show new highscore list with previous scores stored
@@ -195,22 +190,49 @@ function storeUser() {
         // once clicked on button start the game again
     // display button to clear the scores
         // once button clicked clear the scores
+
 function displayHighscores() {
     let $h3El = document.createElement("h3");
-    $h3El.textContent = "Highscore";
+    $h3El.textContent = "Highscores";
     $highScore.prepend($h3El);
 
-    $userName.textContent = localStorage.getItem("Name");
-    $finalScore.textContent = localStorage.getItem("Score");
+    // sort userArray from highiest to lowest
+    userArray.sort(function(a, b) {
+        return b.userScore - a.userScore;
+    })
+
+    console.log(userArray)
+    let $olEl = document.createElement("ol");
+    $highScore.appendChild($olEl);
+
+    for (let i = 0; i < userArray.length; i++) {
+        // create an element to hold the list item 
+        let $liEl = document.createElement("li");
+        // for each item display initials - score (text content)
+        $liEl.textContent = userArray[i].initials + " - " + userArray[i].userScore;
+        // append to the html
+        $olEl.appendChild($liEl);
+        // append to the html
+    }
 
     let $restartBtn = document.createElement("button");
     $restartBtn.setAttribute("class", "btnRestart");
     $restartBtn.textContent = "Let's play again?";
     $highScore.appendChild($restartBtn);
-}
 
-$highScore.addEventListener("click", function(){
-    location.reload();
-})
+    $restartBtn.addEventListener("click", function(){
+        location.reload();
+    })
+
+    let $clearBtn = document.createElement("button");
+    $clearBtn.setAttribute("class", "btnClear");
+    $clearBtn.textContent = "Clear";
+    $highScore.appendChild($clearBtn);
+
+    $clearBtn.addEventListener("click", function(){
+        userArray.textContent = "";
+        localStorage.clear();
+    })
+}
 
 $endGame.style.display = "none"
