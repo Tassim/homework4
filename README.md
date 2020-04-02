@@ -13,3 +13,6 @@ Time is your enemy, anything on the page, such as layout, color, time and score 
 At the end of the game you get to add your name to the highscore list and compare yourself with the top highscores.
 
 Good luck!
+
+
+Link to the game: https://tassim.github.io/homework4/index
