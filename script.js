@@ -230,7 +230,7 @@ function displayHighscores() {
     $highScore.appendChild($clearBtn);
 
     $clearBtn.addEventListener("click", function(){
-        userArray.textContent = "";
+        location.reload();
         localStorage.clear();
     })
 }
